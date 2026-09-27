@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Git pre-commit hook: refuses commits that contain participant data or generated outputs.
+# Installed by tools/install_git_hook.sh. To bypass it deliberately: git commit --no-verify.
+blocked=$(git diff --cached --name-only --diff-filter=ACM | grep -E \
+  '^data/(raw|private|processed)/[^.]|\.(xlsx|xls|sav|rds|RData|rda)$|^(tables|figures|logs)/|\.csv$' \
+  | grep -v -E '^verify/expected_values\.csv$|/\.gitkeep$')
+if [ -n "$blocked" ]; then
+  echo "Commit refused: these files look like data or generated outputs:"
+  echo "$blocked" | sed 's/^/  /'
+  echo "Unstage them with: git rm --cached <file>"
+  exit 1
+fi

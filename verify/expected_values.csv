@@ -1,0 +1,155 @@
+id,location,claim,reported,decimals,expression
+S01,Abstract; Participants,analytic sample,113,0,D('participants')
+S02,Abstract; Participants,strength-based n,60,0,D('participants_strength_based')
+S03,Abstract; Participants,barrier-based n,53,0,D('participants_barrier_based')
+S04,Abstract,median intervention-phase observations,55,0,D('intervention_obs_median_all')
+S05,Participants,age mean,52.6,1,D('age_mean')
+S06,Participants,age SD,8.67,2,D('age_sd')
+S07,Participants,age range,28-69,,D('age_range')
+S08,Participants; Limitations,% female,87.6,1,D('female_pct')
+S09,Participants,% mental health comorbidity,14.2,1,D('mental_health_comorbidity_pct')
+S10,Participants; Table S10,% autoimmune / rheumatic,26.5,1,D('condition_Autoimmune / rheumatic_pct')
+S11,Participants; Table S10,% chronic pain,26.5,1,D('condition_Chronic pain_pct')
+S12,Participants; Table S10,% endocrine-metabolic,12.4,1,D('condition_Endocrine-metabolic_pct')
+S13,Participants; Table S10,% oncological,10.6,1,D('condition_Oncological_pct')
+S14,Participants; Table S10,% gastrointestinal,7.1,1,D('condition_Gastrointestinal_pct')
+S15,Measures,"median assessment window, days",77,0,D('window_days_median')
+S16,Measures,"range of assessment window, days",11-83,,D('window_days_range')
+S17,Data quality; Results; Table S9,daily prompts,7051,0,D('daily_prompts_total')
+S18,Results; Table 1; Figure 1,"median observations, strength-based",56,0,D('intervention_obs_median_strength_based')
+S19,Results; Table 1; Figure 1,"median observations, barrier-based",54,0,D('intervention_obs_median_barrier_based')
+S20,Table 1,"intervention-phase observations, strength-based",3060,0,D('intervention_obs_strength_based')
+S21,Table 1,"intervention-phase observations, barrier-based",2615,0,D('intervention_obs_barrier_based')
+S22,Table 1,"range of observations, strength-based",4-64,,D('intervention_obs_range_strength_based')
+S23,Table 1,"range of observations, barrier-based",13-64,,D('intervention_obs_range_barrier_based')
+S24,Data processing,% of lags between consecutive days,85.4,1,D('lag_coverage_pct')
+B01,"Results, Participant flow",items higher in the barrier-based arm (of 9),8,0,"int((T('baseline_balance.csv').query(""variable != 'global_wellbeing'"").diff_barrier_minus_strength > 0).sum())"
+B02,"Results, Participant flow",largest baseline difference: uncorrected p (negative emotion regulation),0.048,3,"row('baseline_balance.csv', variable='negative_emotion_regulation').p"
+B03,"Results, Participant flow",baseline differences surviving FDR,0,0,int((T('baseline_balance.csv').p_fdr < .05).sum())
+R01,EMA reliability; Supplement S2,minimum item ICC,0.36,2,T('psychometrics_icc.csv').ICC1.min()
+R02,EMA reliability; Supplement S2,maximum item ICC,0.57,2,T('psychometrics_icc.csv').ICC1.max()
+R03,Supplement S2,median item ICC,0.48,2,T('psychometrics_icc.csv').ICC1.median()
+R04,EMA reliability; Supplement S2,minimum R_kr exceeds .96,True,,bool(T('psychometrics_icc.csv').R_kr.min() > .96)
+R05,EMA reliability; Supplement S2,"two-item Spearman-Brown, global well-being",0.91,2,T('psychometrics_composite.csv').spearman_brown[0]
+R06,Supplement S2,"inter-item r, global well-being",0.83,2,T('psychometrics_composite.csv').inter_item_r[0]
+R07,Supplement S2,lowest median lag-1 autocorrelation,0.14,2,T('psychometrics_autocorrelations.csv').ac_median.min()
+R08,Supplement S2,highest median lag-1 autocorrelation,0.21,2,T('psychometrics_autocorrelations.csv').ac_median.max()
+C01,Data quality; Supplement S3; Table S9,% prompts with any careless flag,4.69,2,100*T('careless_responses_per_prompt.csv').flag_any.mean()
+C02,Data quality; Supplement S3,prompts with longstring >= 8,119,0,int(T('careless_responses_per_prompt.csv').flag_longstring.sum())
+P01,"Results, Phase 1",participants in lagged models,110,0,int(T('phase1_lagged_mlm.csv').n_subj.max())
+P02,"Results, Phase 1; Supplement S4",triads,4149,0,int(T('phase1_lagged_mlm.csv').n_obs.max())
+P03,"Abstract; Results, Phase 1",interactions surviving FDR,0,0,int((T('phase1_lagged_mlm.csv').p_interact_fdr < .05).sum())
+P04,"Results, Phase 1",smallest FDR p: beta (reappraisal -> negative emotion regulation),0.095,3,"row('phase1_lagged_mlm.csv', outcome='negative_emotion_regulation', process='cognitive_reappraisal').b_interact"
+P05,"Results, Phase 1",same interaction: p,0.005,3,"row('phase1_lagged_mlm.csv', outcome='negative_emotion_regulation', process='cognitive_reappraisal').p_interact"
+P06,"Results, Phase 1",same interaction: FDR p,0.116,3,"row('phase1_lagged_mlm.csv', outcome='negative_emotion_regulation', process='cognitive_reappraisal').p_interact_fdr"
+P07,"Results, Phase 1",all other FDR p > .27,True,,bool(sorted(T('phase1_lagged_mlm.csv').p_interact_fdr)[1] > .27)
+P08,"Results, Phase 1",no-baseline model (z within person): significant interactions,2,0,"int((T('sensitivity_specification.csv').query(""specification == 'no_baseline_zwithin'"").p_interact_fdr < .05).sum())"
+P09,"Results, Phase 1","no-baseline model (centered, as primary): significant interactions",0,0,"int((T('sensitivity_specification.csv').query(""specification == 'no_baseline_centered'"").p_interact_fdr < .05).sum())"
+P10,"Results, Phase 1; Table S7",n with >= 30 observations in models,101,0,int(T('sensitivity_min30obs.csv').nsubj_sens.max())
+P11,"Results, Phase 1; Table S7",r full vs >= 30 observations,0.998,3,"T('sensitivity_min30obs.csv')[['b_full','b_sens']].corr().iloc[0,1]"
+P12,"Results, Phase 1; Table S8",n with >= 4 sessions in models,100,0,int(T('sensitivity_attendance.csv').nsubj_sens.max())
+P13,"Results, Phase 1; Table S8",r full vs >= 4 sessions,0.984,3,"T('sensitivity_attendance.csv')[['b_full','b_sens']].corr().iloc[0,1]"
+P14,"Results, Phase 1",significant interactions in the two restricted samples,0,0,int((T('sensitivity_min30obs.csv').pfdr_sens < .05).sum() + (T('sensitivity_attendance.csv').pfdr_sens < .05).sum())
+P15,"Results, Phase 1",sign changes in the two restricted samples,0,0,int(T('sensitivity_min30obs.csv').sign_flip.sum() + T('sensitivity_attendance.csv').sign_flip.sum())
+P16,"Results, Phase 1; Table S14",models with session-group variance at zero,24,0,int(T('sensitivity_group_phase1.csv').singular_group.sum())
+P17,"Results, Phase 1",careless sensitivity: beta reappraisal -> negative emotion regulation,0.107,3,"row('sensitivity_careless.csv', outcome='negative_emotion_regulation', process='cognitive_reappraisal').b_sens"
+P18,"Results, Phase 1",careless sensitivity: FDR p,0.037,3,"row('sensitivity_careless.csv', outcome='negative_emotion_regulation', process='cognitive_reappraisal').pfdr_sens"
+P19,"Results, Phase 1",careless sensitivity: other terms significant,0,0,int((T('sensitivity_careless.csv').pfdr_sens < .05).sum()) - 1
+P20,Table S9 note,careless sensitivity: r with full sample,0.987,3,"T('sensitivity_careless.csv')[['b_full','b_sens']].corr().iloc[0,1]"
+P21,Sample size and power; Supplement S4,power at |b| = 0.10 (%),85,0,"100*row('sensitivity_power_simr.csv', effect=0.1).power"
+P22,Sample size and power; Supplement S4,power at |b| = 0.07 (%),57,0,"100*row('sensitivity_power_simr.csv', effect=0.07).power"
+P23,Sample size and power; Supplement S4,power at |b| = 0.05 (%),33,0,"100*row('sensitivity_power_simr.csv', effect=0.05).power"
+N01,"Results, Phase 2; Table S12",participants in mlVAR,107,0,D('participants_ge20obs')
+N02,"Results, Phase 2; Figure 2","mlVAR n, strength-based",57,0,D('participants_ge20obs_strength_based')
+N03,"Results, Phase 2; Figure 2","mlVAR n, barrier-based",50,0,D('participants_ge20obs_barrier_based')
+N04,Supplement S6,"contemporaneous network observations, strength-based",3033,0,D('intervention_obs_ge20_strength_based')
+N05,Supplement S6,"contemporaneous network observations, barrier-based",2571,0,D('intervention_obs_ge20_barrier_based')
+N06,"Results, Phase 2; Table S6","temporal edges, strength-based",25,0,"row('network_indices.csv', arm='CBWT', network='temporal').n_edges_filtered"
+N07,"Results, Phase 2; Table S6","temporal edges, barrier-based",11,0,"row('network_indices.csv', arm='CBT', network='temporal').n_edges_filtered"
+N08,"Results, Phase 2","temporal filtered density, strength-based",0.31,2,"row('network_indices.csv', arm='CBWT', network='temporal').filtered_density"
+N09,"Results, Phase 2","temporal filtered density, barrier-based",0.14,2,"row('network_indices.csv', arm='CBT', network='temporal').filtered_density"
+N10,"Results, Phase 2","temporal global strength, strength-based",3.55,2,"row('network_indices.csv', arm='CBWT', network='temporal').global_strength_full"
+N11,"Results, Phase 2","temporal global strength, barrier-based",2.93,2,"row('network_indices.csv', arm='CBT', network='temporal').global_strength_full"
+N12,"Results, Phase 2; Table S6",difference in global strength (bootstrap means),0.46,2,T('network_strength_difference.csv').boot_mean_difference[0]
+N13,"Results, Phase 2; Table S6","difference: 95% interval, lower",-0.57,2,T('network_strength_difference.csv').ci_lo[0]
+N14,"Results, Phase 2; Table S6","difference: 95% interval, upper",1.45,2,T('network_strength_difference.csv').ci_hi[0]
+N15,"Results, Phase 2; Table S6",% iterations strength-based higher,83.6,1,T('network_strength_difference.csv').pct_strength_higher[0]
+N16,"Results, Phase 2","contemporaneous filtered density, strength-based",0.69,2,"row('network_indices.csv', arm='CBWT', network='contemporaneous').filtered_density"
+N17,"Results, Phase 2","contemporaneous filtered density, barrier-based",0.62,2,"row('network_indices.csv', arm='CBT', network='contemporaneous').filtered_density"
+N18,"Results, Phase 2","contemporaneous global strength, strength-based",7.68,2,"row('network_indices.csv', arm='CBWT', network='contemporaneous').global_strength_full"
+N19,"Results, Phase 2","contemporaneous global strength, barrier-based",8.05,2,"row('network_indices.csv', arm='CBT', network='contemporaneous').global_strength_full"
+N20,"Results, Phase 2","temporal strength, gratitude, strength-based",0.89,2,"row('mlvar_centrality.csv', type='CBWT_temporal', node='gratitude').strength"
+N21,"Results, Phase 2","temporal strength, cognitive reappraisal, strength-based",0.81,2,"row('mlvar_centrality.csv', type='CBWT_temporal', node='cognitive_reappraisal').strength"
+N22,"Results, Phase 2","temporal strength, emotional awareness, strength-based",0.76,2,"row('mlvar_centrality.csv', type='CBWT_temporal', node='emotional_awareness').strength"
+N23,"Results, Phase 2","temporal strength, gratitude, barrier-based",0.58,2,"row('mlvar_centrality.csv', type='CBT_temporal', node='gratitude').strength"
+N24,"Results, Phase 2","temporal strength, hedonic well-being, barrier-based",0.53,2,"row('mlvar_centrality.csv', type='CBT_temporal', node='hedonic_wellbeing').strength"
+N25,"Results, Phase 2","temporal strength, positive emotion regulation, barrier-based",0.51,2,"row('mlvar_centrality.csv', type='CBT_temporal', node='positive_emotion_regulation').strength"
+N26,"Results, Phase 2","top three strength-based = gratitude, reappraisal, awareness",True,,"list(T('mlvar_centrality.csv').query(""type == 'CBWT_temporal'"").nlargest(3,'strength').node) == ['gratitude','cognitive_reappraisal','emotional_awareness']"
+N27,"Results, Phase 2","top three barrier-based = gratitude, hedonic, positive regulation",True,,"list(T('mlvar_centrality.csv').query(""type == 'CBT_temporal'"").nlargest(3,'strength').node) == ['gratitude','hedonic_wellbeing','positive_emotion_regulation']"
+N28,"Results, Phase 2","out-strength of gratitude, strength-based",0.63,2,"row('mlvar_centrality.csv', type='CBWT_temporal', node='gratitude').out_strength"
+N29,"Results, Phase 2","out-strength of gratitude, barrier-based",0.35,2,"row('mlvar_centrality.csv', type='CBT_temporal', node='gratitude').out_strength"
+N30,"Results, Phase 2; Table S3","gratitude ranked first, strength-based (%)",53.3,1,"row('mlvar_rank_stability.csv', arm='CBWT', node='gratitude').pct_first"
+N31,"Results, Phase 2; Table S3","gratitude ranked first, barrier-based (%)",37.6,1,"row('mlvar_rank_stability.csv', arm='CBT', node='gratitude').pct_first"
+N32,"Results, Phase 2; Table S3","gratitude in top three, strength-based (%)",94.0,1,"row('mlvar_rank_stability.csv', arm='CBWT', node='gratitude').pct_top3"
+N33,"Results, Phase 2; Table S3","gratitude in top three, barrier-based (%)",70.7,1,"row('mlvar_rank_stability.csv', arm='CBT', node='gratitude').pct_top3"
+N34,"Results, Phase 2; Table S2","contemporaneous strength of self-compassion, strength-based (bootstrap mean)",2.04,2,"row('mlvar_centrality_bootstrap_B1000_summary.csv', arm='CBWT', network='contemporaneous', node='self_compassion', index='strength')['mean']"
+N35,"Results, Phase 2; Table S2",same: 95% CI lower,1.86,2,"row('mlvar_centrality_bootstrap_B1000_summary.csv', arm='CBWT', network='contemporaneous', node='self_compassion', index='strength').lo"
+N36,"Results, Phase 2; Table S2",same: 95% CI upper,2.22,2,"row('mlvar_centrality_bootstrap_B1000_summary.csv', arm='CBWT', network='contemporaneous', node='self_compassion', index='strength').hi"
+N37,"Results, Phase 2","self-compassion third in contemporaneous strength, strength-based",True,,"list(T('mlvar_centrality_bootstrap_B1000_summary.csv').query(""arm == 'CBWT' and network == 'contemporaneous' and index == 'strength'"").nlargest(3,'mean').node).index('self_compassion') == 2"
+N38,"Results, Phase 2","self-compassion not in top three contemporaneous, barrier-based",True,,"'self_compassion' not in list(T('mlvar_centrality_bootstrap_B1000_summary.csv').query(""arm == 'CBT' and network == 'contemporaneous' and index == 'strength'"").nlargest(3,'mean').node)"
+K01,"Results, Phase 3; Table S12",participants with change-point series,103,0,int(T('changepoint_rate_contrast.csv').analysable_strength[0] + T('changepoint_rate_contrast.csv').analysable_barrier[0])
+K02,"Results, Phase 3","analysable, strength-based",56,0,T('changepoint_rate_contrast.csv').analysable_strength[0]
+K03,"Results, Phase 3","analysable, barrier-based",47,0,T('changepoint_rate_contrast.csv').analysable_barrier[0]
+K04,"Results, Phase 3",gains,211,0,T('changepoint_rate_contrast.csv').gains_total[0]
+K05,"Results, Phase 3","gains, strength-based",139,0,T('changepoint_rate_contrast.csv').gains_strength[0]
+K06,"Results, Phase 3","participant-variable pairs with gains, strength-based",133,0,T('changepoint_rate_contrast.csv').pairs_with_gain_strength[0]
+K07,"Results, Phase 3","gains, barrier-based",72,0,T('changepoint_rate_contrast.csv').gains_barrier[0]
+K08,"Results, Phase 3","gains per participant, strength-based",2.48,2,T('changepoint_rate_contrast.csv').rate_strength[0]
+K09,"Results, Phase 3","gains per participant, barrier-based",1.53,2,T('changepoint_rate_contrast.csv').rate_barrier[0]
+K10,"Abstract; Results, Phase 3",rate ratio,1.62,2,T('changepoint_rate_contrast.csv').rate_ratio[0]
+K11,"Abstract; Results, Phase 3",rate ratio 95% CI lower,0.92,2,T('changepoint_rate_contrast.csv').boot_ci_lo[0]
+K12,"Abstract; Results, Phase 3",rate ratio 95% CI upper,3.03,2,T('changepoint_rate_contrast.csv').boot_ci_hi[0]
+K13,"Results, Phase 3",permutation p (two-sided),0.104,3,T('changepoint_rate_contrast.csv').perm_p_two_sided[0]
+K14,"Results, Phase 3","% with >= 1 gain, strength-based",51.8,1,T('changepoint_rate_contrast.csv').pct_any_gain_strength[0]
+K15,"Results, Phase 3","% with >= 1 gain, barrier-based",44.7,1,T('changepoint_rate_contrast.csv').pct_any_gain_barrier[0]
+K16,"Results, Phase 3","chi-square p, share with >= 1 gain",0.603,3,T('changepoint_rate_contrast.csv').chisq_p_any_gain[0]
+K17,"Results, Phase 3","no gains, strength-based",27,0,T('changepoint_rate_contrast.csv').zero_gain_strength[0]
+K18,"Results, Phase 3","no gains, barrier-based",26,0,T('changepoint_rate_contrast.csv').zero_gain_barrier[0]
+K19,"Results, Phase 3; Table S4","participants with self-compassion gain, strength-based",18,0,"row('changepoints_summary.csv', arm='CBWT', variable='self_compassion').n_subj_with_gain"
+K20,"Results, Phase 3; Table S4","participants with compassion gain, strength-based",12,0,"row('changepoints_summary.csv', arm='CBWT', variable='compassion').n_subj_with_gain"
+K21,"Results, Phase 3; Table S4","participants with emotional awareness gain, strength-based",11,0,"row('changepoints_summary.csv', arm='CBWT', variable='emotional_awareness').n_subj_with_gain"
+K22,"Results, Phase 3; Table S4","participants with gratitude gain, barrier-based",11,0,"row('changepoints_summary.csv', arm='CBT', variable='gratitude').n_subj_with_gain"
+K23,"Results, Phase 3","median Cohen's d of gains, strength-based",1.36,2,"T('changepoints_all.csv').query(""is_gain and arm == 'CBWT'"").cohen_d.median()"
+K24,"Results, Phase 3","median Cohen's d of gains, barrier-based",1.34,2,"T('changepoints_all.csv').query(""is_gain and arm == 'CBT'"").cohen_d.median()"
+K25,"Results, Phase 3",precedence tests significant after FDR,0,0,int((T('changepoint_sequence_tests.csv').p_fdr < .05).sum())
+K26,Supplement S7,min.size sensitivity: largest deviation in gain counts from min.size = 14 (%),11,0,(lambda t: 100*max(abs(t.B_gains_10vars - t.B_gains_10vars[t.min_size == 14].iloc[0]))/t.B_gains_10vars[t.min_size == 14].iloc[0])(T('changepoint_minsize_sensitivity.csv'))
+I01,"Abstract; Results, Phase 4","pairs surviving FDR, strength-based",21,0,"int((T('idionomic_meta_by_arm.csv').query(""arm == 'CBWT'"").p_fdr < .05).sum())"
+I02,"Results, Phase 4","pairs surviving FDR, barrier-based",0,0,"int((T('idionomic_meta_by_arm.csv').query(""arm == 'CBT'"").p_fdr < .05).sum())"
+I03,"Abstract; Results, Phase 4","compassion -> cognitive well-being, strength-based",0.119,3,"row('idionomic_meta_by_arm.csv', arm='CBWT', outcome='cognitive_wellbeing', process='compassion').beta"
+I04,"Abstract; Results, Phase 4","compassion -> cognitive well-being, barrier-based",0.052,3,"row('idionomic_meta_by_arm.csv', arm='CBT', outcome='cognitive_wellbeing', process='compassion').beta"
+I05,"Results, Phase 4","self-compassion -> cognitive well-being, strength-based",0.141,3,"row('idionomic_meta_by_arm.csv', arm='CBWT', outcome='cognitive_wellbeing', process='self_compassion').beta"
+I06,"Results, Phase 4","self-compassion -> cognitive well-being, barrier-based",0.062,3,"row('idionomic_meta_by_arm.csv', arm='CBT', outcome='cognitive_wellbeing', process='self_compassion').beta"
+I07,"Results, Phase 4","reappraisal -> cognitive well-being, strength-based",0.060,3,"row('idionomic_meta_by_arm.csv', arm='CBWT', outcome='cognitive_wellbeing', process='cognitive_reappraisal').beta"
+I08,"Results, Phase 4","reappraisal -> cognitive well-being, barrier-based",0.017,3,"row('idionomic_meta_by_arm.csv', arm='CBT', outcome='cognitive_wellbeing', process='cognitive_reappraisal').beta"
+I09,"Results, Phase 4","k range, strength-based",50-51,,"(lambda t: f'{t.k.min()}-{t.k.max()}')(T('idionomic_meta_by_arm.csv').query(""arm == 'CBWT'""))"
+I10,"Results, Phase 4","k range, barrier-based",47-48,,"(lambda t: f'{t.k.min()}-{t.k.max()}')(T('idionomic_meta_by_arm.csv').query(""arm == 'CBT'""))"
+I11,"Results, Phase 4; Table S13","pairs surviving FDR, arms pooled",20,0,int((T('idionomic_meta.csv').p_fdr < .05).sum())
+I12,"Results, Phase 4","median I2, strength-based (%)",28.5,1,"T('idionomic_meta_by_arm.csv').query(""arm == 'CBWT'"").I2.median()"
+I13,"Results, Phase 4","median I2, barrier-based (%)",11.4,1,"T('idionomic_meta_by_arm.csv').query(""arm == 'CBT'"").I2.median()"
+I14,"Results, Phase 4; Supplement S8",participants clustered,97,0,len(T('idionomic_clusters.csv'))
+I15,Supplement S8,"participants clustered, strength-based",50,0,int((T('idionomic_clusters.csv').arm == 'CBWT').sum())
+I16,Supplement S8,"participants clustered, barrier-based",47,0,int((T('idionomic_clusters.csv').arm == 'CBT').sum())
+I17,Supplement S8,excluded: no estimable coefficient,14,0,int((T('idionomic_betas.csv').groupby('code').beta.apply(lambda b: b.isna().all())).sum())
+I18,Supplement S8,excluded: incomplete vector,2,0,int((T('idionomic_betas.csv').groupby('code').beta.apply(lambda b: b.isna().any() and not b.isna().all())).sum())
+I19,"Results, Phase 4; Table S5","clusters, strength-based",2,0,"int(T('idionomic_clusters.csv').query(""arm == 'CBWT'"").silhouette_best_k.iloc[0])"
+I20,"Results, Phase 4; Table S5","clusters, barrier-based",3,0,"int(T('idionomic_clusters.csv').query(""arm == 'CBT'"").silhouette_best_k.iloc[0])"
+I21,Supplement S8; Table S5,"cluster sizes, strength-based",20/30,,"'/'.join(str(x) for x in sorted(T('idionomic_clusters.csv').query(""arm == 'CBWT'"").cluster.value_counts()))"
+I22,Supplement S8; Table S5,"cluster sizes, barrier-based",1/17/29,,"'/'.join(str(x) for x in sorted(T('idionomic_clusters.csv').query(""arm == 'CBT'"").cluster.value_counts()))"
+I23,"Results, Phase 4; Supplement S8","mean silhouette, strength-based",0.20,2,"T('idionomic_clusters.csv').query(""arm == 'CBWT'"").silhouette_avg.iloc[0]"
+I24,"Results, Phase 4; Supplement S8","mean silhouette, barrier-based",0.22,2,"T('idionomic_clusters.csv').query(""arm == 'CBT'"").silhouette_avg.iloc[0]"
+I25,Supplement S8,"bootstrap silhouette mean, strength-based",0.27,2,"row('cluster_bootstrap_silhouette.csv', arm='CBWT')['mean_silhouette']"
+I26,Supplement S8,"bootstrap silhouette SD, strength-based",0.04,2,"row('cluster_bootstrap_silhouette.csv', arm='CBWT').sd"
+I27,Supplement S8,"bootstrap silhouette mean, barrier-based",0.25,2,"row('cluster_bootstrap_silhouette.csv', arm='CBT')['mean_silhouette']"
+I28,Supplement S8,"bootstrap silhouette SD, barrier-based",0.05,2,"row('cluster_bootstrap_silhouette.csv', arm='CBT').sd"
+P24,"Results, Phase 1",no-baseline model (centered): largest change in interaction coefficient,0.006,3,"(lambda s, p: (s.merge(p, on=['outcome','process'], suffixes=('','_p')).pipe(lambda m: (m.b_interact - m.b_interact_p).abs().max())))(T('sensitivity_specification.csv').query(""specification == 'no_baseline_centered'""), T('phase1_lagged_mlm.csv')[['outcome','process','b_interact']])"
+P25,"Results, Phase 1",no-baseline model (centered): smallest FDR p,0.122,3,"T('sensitivity_specification.csv').query(""specification == 'no_baseline_centered'"").p_interact_fdr.min()"

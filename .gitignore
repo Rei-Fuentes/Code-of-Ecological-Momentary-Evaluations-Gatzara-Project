@@ -1,0 +1,25 @@
+# Participant data never go to version control: keep only the READMEs and placeholders.
+data/raw/*
+data/private/*
+data/processed/
+!data/raw/.gitkeep
+!data/private/.gitkeep
+
+# Everything the analysis generates can be rebuilt with run_all.sh.
+tables/
+figures/
+logs/
+
+# Data formats that should not appear anywhere else in the repository.
+*.xlsx
+*.xls
+*.sav
+*.rds
+*.RData
+*.rda
+
+# System and editor files
+.DS_Store
+.Rhistory
+.Rproj.user/
+__pycache__/
